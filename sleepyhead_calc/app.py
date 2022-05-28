@@ -31,6 +31,7 @@ def process_ddb_records(event):
         if eventName == "INSERT" or eventName == "MODIFY":
             sleep_duration = None
             idle_wakeup_duration = None
+            average_energy_score = None
             newImage = ddb.get("NewImage")
             if is_sleep_duration_update_required(ddb):
                 print("Sleep duration update required for key " + key)
@@ -38,9 +39,11 @@ def process_ddb_records(event):
             if is_idle_wakeup_duration_update_required(ddb):
                 print("Idle wakeup time update required for key " + key)
                 idle_wakeup_duration = update_idle_wakeup_duration(newImage)
-                
-            if sleep_duration or idle_wakeup_duration:
-                update_ddb_item(key, sleep_duration, idle_wakeup_duration)
+            if is_energy_score_update_required(ddb):
+                print("Average energy score update required for key " + key)
+                average_energy_score = update_average_energy_score(newImage)
+            if sleep_duration or idle_wakeup_duration or average_energy_score:
+                update_ddb_item(key, sleep_duration, idle_wakeup_duration, average_energy_score)
             else:
                 print("No update required for key " + key)
                 
@@ -52,20 +55,27 @@ def process_scheduled_event(event):
         key = item.get("DayId").get("S")
         sleep_duration = None
         idle_wakeup_duration = None
-        if not item.get("SleepDurationInMinutes"):
+        average_energy_score = None
+        if not item.get("SleepDurationInMinutes") and is_sleep_duration_update_required(item):
             print("Sleep duration update required for key " + key)
             sleep_duration = update_total_sleep_duration(item)
-        if not item.get("IdleWakeupDurationInMinutes"):
+        if not item.get("IdleWakeupDurationInMinutes") and is_idle_wakeup_duration_update_required(item):
             print("Idle wakeup time update required for key " + key)
             idle_wakeup_duration = update_idle_wakeup_duration(item)
-        if sleep_duration or idle_wakeup_duration:
-            update_ddb_item(key, sleep_duration, idle_wakeup_duration)
+        if not item.get("AverageEnergyScore") and is_energy_score_update_required(item):
+            print("Average energy score update required for key " + key)
+            average_energy_score = update_average_energy_score(item)
+        if sleep_duration or idle_wakeup_duration or average_energy_score:
+            update_ddb_item(key, sleep_duration, idle_wakeup_duration, average_energy_score)
         else:
             print("No update required for key " + key)
                 
         
 def is_sleep_duration_update_required(ddb):
-    newImage = ddb.get("NewImage")
+    if ddb.get("NewImage"):
+        newImage = ddb.get("NewImage")
+    else:
+        newImage = ddb
     
     if not newImage.get("Bedtime") or not newImage.get("FinalWakeUpTime"):
         return False
@@ -105,7 +115,10 @@ def update_total_sleep_duration(newImage):
     return sleep_duration
     
 def is_idle_wakeup_duration_update_required(ddb):
-    newImage = ddb.get("NewImage")
+    if ddb.get("NewImage"):
+        newImage = ddb.get("NewImage")
+    else:
+        newImage = ddb
     
     if not newImage.get("FinalWakeUpTime") or not newImage.get("AriseTime"):
         return False
@@ -129,7 +142,46 @@ def update_idle_wakeup_duration(newImage):
     
     return idle_wakeup_duration
     
-def update_ddb_item(entry_date, sleep_duration, idle_wakeup_duration):
+def is_energy_score_update_required(ddb):
+    if ddb.get("NewImage"):
+        newImage = ddb.get("NewImage")
+    else:
+        newImage = ddb
+    
+    if not (newImage.get("MorningEnergy") or newImage.get("ForenoonEnergy") or newImage.get("AfternoonEnergy") or newImage.get("EveningEnergy")):
+        print("No energy scores exist")
+        return False
+        
+    if ddb.get("OldImage"):
+        oldImage = ddb.get("OldImage")
+        if newImage.get("MorningEnergy") and (newImage.get("MorningEnergy").get("S") != oldImage.get("MorningEnergy").get("S")):
+            return True
+        if newImage.get("ForenoonEnergy") and (newImage.get("ForenoonEnergy").get("S") != oldImage.get("ForenoonEnergy").get("S")):
+            return True
+        if newImage.get("AfternoonEnergy") and (newImage.get("AfternoonEnergy").get("S") != oldImage.get("AfternoonEnergy").get("S")):
+            return True
+        if newImage.get("EveningEnergy") and (newImage.get("EveningEnergy").get("S") != oldImage.get("EveningEnergy").get("S")):
+            return True
+        return False
+    return True
+    
+def update_average_energy_score(newImage):
+    energy_score_list = []
+    
+    if newImage.get("MorningEnergy"):
+        energy_score_list.append(float(newImage.get("MorningEnergy").get("S")))
+    if newImage.get("ForenoonEnergy"):
+        energy_score_list.append(float(newImage.get("ForenoonEnergy").get("S")))
+    if newImage.get("AfternoonEnergy"):
+        energy_score_list.append(float(newImage.get("AfternoonEnergy").get("S")))
+    if newImage.get("EveningEnergy"):
+        energy_score_list.append(float(newImage.get("EveningEnergy").get("S")))
+
+    average_energy_score = sum(energy_score_list)/len(energy_score_list)
+    
+    return average_energy_score
+    
+def update_ddb_item(entry_date, sleep_duration, idle_wakeup_duration, average_energy_score):
     ddb_item_key = dict()
     ddb_item_key['DayId'] = { 'S': entry_date }
     
@@ -144,6 +196,10 @@ def update_ddb_item(entry_date, sleep_duration, idle_wakeup_duration):
     if idle_wakeup_duration:
         update_expression_list.append('IdleWakeupDurationInMinutes = :iwm')
         exp_attr_values[':iwm'] = { 'N' : str(idle_wakeup_duration) }
+        
+    if average_energy_score:
+        update_expression_list.append('AverageEnergyScore = :aes')
+        exp_attr_values[':aes'] = { 'N': str(average_energy_score) }
         
     update_expression = update_expression + ','.join(update_expression_list)
     
