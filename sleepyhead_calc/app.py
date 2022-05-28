@@ -69,13 +69,13 @@ def is_sleep_duration_update_required(ddb):
         
     if ddb.get("OldImage"):
         oldImage = ddb.get("OldImage")
-        if newImage.get("Bedtime") and (newImage.get("Bedtime") != oldImage.get("Bedtime")):
+        if validate_diff(newImage, oldImage, "Bedtime"):
             return True
-        if newImage.get("FinalWakeUpTime") and (newImage.get("FinalWakeUpTime") != oldImage.get("FinalWakeUpTime")):
+        if validate_diff(newImage, oldImage, "FinalWakeUpTime"):
             return True
-        if newImage.get("HowLongToSleep") and (newImage.get("HowLongToSleep") != oldImage.get("HowLongToSleep")):
+        if validate_diff(newImage, oldImage, "HowLongToSleep"):
             return True
-        if newImage.get("WakeUpDuration") and (newImage.get("WakeUpDuration") != oldImage.get("WakeUpDuration")):
+        if validate_diff(newImage, oldImage, "WakeUpDuration"):
             return True
         return False
         
@@ -112,9 +112,9 @@ def is_idle_wakeup_duration_update_required(ddb):
         
     if ddb.get("OldImage"):
         oldImage = ddb.get("OldImage")
-        if newImage.get("FinalWakeUpTime") and (newImage.get("FinalWakeUpTime").get("S") != oldImage.get("FinalWakeUpTime").get("S")):
+        if validate_diff(newImage, oldImage, "FinalWakeUpTime"):
             return True
-        if newImage.get("AriseTime") and (newImage.get("AriseTime").get("S") != oldImage.get("AriseTime").get("S")):
+        if validate_diff(newImage, oldImage, "AriseTime"):
             return True
         return False
         
@@ -141,13 +141,13 @@ def is_energy_score_update_required(ddb):
         
     if ddb.get("OldImage"):
         oldImage = ddb.get("OldImage")
-        if newImage.get("MorningEnergy") and (newImage.get("MorningEnergy").get("S") != oldImage.get("MorningEnergy").get("S")):
+        if validate_diff(newImage, oldImage, "MorningEnergy"):
             return True
-        if newImage.get("ForenoonEnergy") and (newImage.get("ForenoonEnergy").get("S") != oldImage.get("ForenoonEnergy").get("S")):
+        if validate_diff(newImage, oldImage, "ForenoonEnergy"):
             return True
-        if newImage.get("AfternoonEnergy") and (newImage.get("AfternoonEnergy").get("S") != oldImage.get("AfternoonEnergy").get("S")):
+        if validate_diff(newImage, oldImage, "AfternoonEnergy"):
             return True
-        if newImage.get("EveningEnergy") and (newImage.get("EveningEnergy").get("S") != oldImage.get("EveningEnergy").get("S")):
+        if validate_diff(newImage, oldImage, "EveningEnergy"):
             return True
         return False
     return True
@@ -167,6 +167,13 @@ def update_average_energy_score(newImage):
     average_energy_score = sum(energy_score_list)/len(energy_score_list)
     
     return average_energy_score
+    
+def validate_diff(newImage, oldImage, attr):
+    if newImage.get(attr) and not oldImage.get(attr):
+        return True
+    if (newImage.get(attr) and oldImage.get(attr)) and (newImage.get(attr).get("S") != oldImage.get(attr).get("S")):
+        return True
+    return False
     
 def update_ddb_item(entry_date, sleep_duration, idle_wakeup_duration, average_energy_score):
     ddb_item_key = dict()
