@@ -16,7 +16,7 @@ def lambda_handler(event, context):
         "statusCode": 200,
         "body": json.dumps(
             {
-                "message": "hello world",
+                "message": "success",
             }
         ),
     }
@@ -41,11 +41,12 @@ def process_ddb_records(event):
                 
             if sleep_duration or idle_wakeup_duration:
                 update_ddb_item(key, sleep_duration, idle_wakeup_duration)
+            else:
+                print("No update required for key " + key)
                 
 def process_scheduled_event(event):
     print("This is a scheduled event")
     items = scan_ddb();
-    print(json.dumps(items[0]))
     
     for item in items:
         key = item.get("DayId").get("S")
@@ -59,6 +60,8 @@ def process_scheduled_event(event):
             idle_wakeup_duration = update_idle_wakeup_duration(item)
         if sleep_duration or idle_wakeup_duration:
             update_ddb_item(key, sleep_duration, idle_wakeup_duration)
+        else:
+            print("No update required for key " + key)
                 
         
 def is_sleep_duration_update_required(ddb):
