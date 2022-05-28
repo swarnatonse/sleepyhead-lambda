@@ -1,0 +1,127 @@
+{
+	"Records": [{
+		"eventID": "461b53e42cdcb1b0dfbe4a7aad36f864",
+		"eventName": "MODIFY",
+		"eventVersion": "1.1",
+		"eventSource": "aws:dynamodb",
+		"awsRegion": "us-east-1",
+		"dynamodb": {
+			"ApproximateCreationDateTime": 1653675865.0,
+			"Keys": {
+				"DayId": {
+					"S": "2022-05-07"
+				}
+			},
+			"NewImage": {
+				"Activities": {
+					"S": "Journaling, Play with Astrid"
+				},
+				"FinalWakeUpTime": {
+					"S": "07:35"
+				},
+				"Bedtime": {
+					"S": "22:30"
+				},
+				"PhoneDownTime": {
+					"S": "22:15"
+				},
+				"WakeUpCount": {
+					"S": "1"
+				},
+				"WakeUpDuration": {
+					"S": "15"
+				},
+				"FitbitScore": {
+					"S": "81"
+				},
+				"MorningEnergy": {
+					"S": "4"
+				},
+				"HowLongToSleep": {
+					"S": "30"
+				},
+				"updatedate": {
+					"S": "2022-05-27"
+				},
+				"LastUpdateTime": {
+					"S": "2022-05-27T18:24:24.874684"
+				},
+				"FitbitMins": {
+					"S": "40"
+				},
+				"ExerciseTime": {
+					"S": "30"
+				},
+				"Exercises": {
+					"S": "Dance"
+				},
+				"FitbitHours": {
+					"S": "7"
+				},
+				"DayId": {
+					"S": "2022-05-27"
+				},
+				"LightsOutTime": {
+					"S": "22:30"
+				},
+				"AriseTime": {
+					"S": "07:45"
+				}
+			},
+			"OldImage": {
+				"Activities": {
+					"S": "Journaling, Play with Astrid"
+				},
+				"FinalWakeUpTime": {
+					"S": "07:25"
+				},
+				"Bedtime": {
+					"S": "22:30"
+				},
+				"PhoneDownTime": {
+					"S": "22:15"
+				},
+				"WakeUpCount": {
+					"S": "1"
+				},
+				"WakeUpDuration": {
+					"S": "15"
+				},
+				"FitbitScore": {
+					"S": "81"
+				},
+				"MorningEnergy": {
+					"S": "4"
+				},
+				"HowLongToSleep": {
+					"S": "30"
+				},
+				"updatedate": {
+					"S": "2022-05-27"
+				},
+				"LastUpdateTime": {
+					"S": "2022-05-27T17:58:59.968010"
+				},
+				"FitbitMins": {
+					"S": "40"
+				},
+				"FitbitHours": {
+					"S": "7"
+				},
+				"DayId": {
+					"S": "2022-05-27"
+				},
+				"LightsOutTime": {
+					"S": "22:30"
+				},
+				"AriseTime": {
+					"S": "07:30"
+				}
+			},
+			"SequenceNumber": "25069200000000001991808977",
+			"SizeBytes": 623,
+			"StreamViewType": "NEW_AND_OLD_IMAGES"
+		},
+		"eventSourceARN": "arn:aws:dynamodb:us-east-1:561577754278:table/SleepData/stream/2022-05-27T17:57:06.068"
+	}]
+}

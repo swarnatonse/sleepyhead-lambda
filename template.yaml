@@ -11,29 +11,34 @@ Globals:
     Timeout: 3
 
 Resources:
-  HelloWorldFunction:
+  SleepyHeadCalculationFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       PackageType: Image
       Architectures:
         - x86_64
       Events:
-        HelloWorld:
+        ScanScheduledEvent:
           Type: Schedule
           Properties:
-            Schedule: rate(5 minutes)
-            Name: my-schedule
-            Description: Example schedule
+            Schedule: cron(0 0 ? * TUE *)
+            Name: scan-schedule
+            Description: Temporary scheduled job to calculate for existing items
             Enabled: True
+        IncomingDDBItemEvent:
+          Type: DynamoDB
+          Properties:
+            Stream: arn:aws:dynamodb:us-east-1:561577754278:table/SleepData/stream/2022-05-27T17:57:06.068
+            StartingPosition: TRIM_HORIZON
     Metadata:
       Dockerfile: Dockerfile
-      DockerContext: ./hello_world
+      DockerContext: ./sleepyhead_calc
       DockerTag: python3.9-v1
 
 Outputs:
-  HelloWorldFunction:
+  SleepyHeadCalculationFunction:
     Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+    Value: !GetAtt SleepyHeadCalculationFunction.Arn
+  SleepyHeadCalculationFunctionIamRole:
+    Description: "Implicit IAM Role created for SleepyHead Calculation function"
+    Value: !GetAtt SleepyHeadCalculationFunctionRole.Arn
