@@ -37,6 +37,24 @@ Resources:
       Dockerfile: Dockerfile
       DockerContext: ./sleepyhead_calc
       DockerTag: python3.9-v1
+  SleepyHeadCSVFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      PackageType: Image
+      Architectures:
+        - x86_64
+      Events:
+        TestScheduledEvent:
+          Type: Schedule
+          Properties:
+            Schedule: rate(2 minutes)
+            Name: test-csv-schedule
+            Description: Test scheduled job
+            Enabled: True
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./sleepyhead_csv
+      DockerTag: python3.9-v1
 
 Outputs:
   SleepyHeadCalculationFunction:
@@ -45,3 +63,9 @@ Outputs:
   SleepyHeadCalculationFunctionIamRole:
     Description: "Implicit IAM Role created for SleepyHead Calculation function"
     Value: !GetAtt SleepyHeadCalculationFunctionRole.Arn
+  SleepyHeadCSVFunction:
+    Description: "SleepyHead CSV Lambda Function ARN"
+    Value: !GetAtt SleepyHeadCSVFunction.Arn
+  SleepyHeadCSVFunctionIamRole:
+    Description: "Implicit IAM Role created for SleepyHead CSV function"
+    Value: !GetAtt SleepyHeadCSVFunctionRole.Arn

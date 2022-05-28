@@ -27,48 +27,35 @@ def process_ddb_records(event):
     for record in records:
         eventName = record.get("eventName")
         ddb = record.get("dynamodb")
-        key = ddb.get("Keys").get("DayId").get("S")
         if eventName == "INSERT" or eventName == "MODIFY":
-            sleep_duration = None
-            idle_wakeup_duration = None
-            average_energy_score = None
             newImage = ddb.get("NewImage")
-            if is_sleep_duration_update_required(ddb):
-                print("Sleep duration update required for key " + key)
-                sleep_duration = update_total_sleep_duration(newImage)
-            if is_idle_wakeup_duration_update_required(ddb):
-                print("Idle wakeup time update required for key " + key)
-                idle_wakeup_duration = update_idle_wakeup_duration(newImage)
-            if is_energy_score_update_required(ddb):
-                print("Average energy score update required for key " + key)
-                average_energy_score = update_average_energy_score(newImage)
-            if sleep_duration or idle_wakeup_duration or average_energy_score:
-                update_ddb_item(key, sleep_duration, idle_wakeup_duration, average_energy_score)
-            else:
-                print("No update required for key " + key)
+            perform_required_updates(newImage)
                 
 def process_scheduled_event(event):
     print("This is a scheduled event")
     items = scan_ddb();
     
     for item in items:
-        key = item.get("DayId").get("S")
-        sleep_duration = None
-        idle_wakeup_duration = None
-        average_energy_score = None
-        if not item.get("SleepDurationInMinutes") and is_sleep_duration_update_required(item):
-            print("Sleep duration update required for key " + key)
-            sleep_duration = update_total_sleep_duration(item)
-        if not item.get("IdleWakeupDurationInMinutes") and is_idle_wakeup_duration_update_required(item):
-            print("Idle wakeup time update required for key " + key)
-            idle_wakeup_duration = update_idle_wakeup_duration(item)
-        if not item.get("AverageEnergyScore") and is_energy_score_update_required(item):
-            print("Average energy score update required for key " + key)
-            average_energy_score = update_average_energy_score(item)
-        if sleep_duration or idle_wakeup_duration or average_energy_score:
-            update_ddb_item(key, sleep_duration, idle_wakeup_duration, average_energy_score)
-        else:
-            print("No update required for key " + key)
+        perform_required_updates(item)
+            
+def perform_required_updates(item):
+    key = item.get("DayId").get("S")
+    sleep_duration = None
+    idle_wakeup_duration = None
+    average_energy_score = None
+    if is_sleep_duration_update_required(item):
+        print("Sleep duration will be updated for key " + key)
+        sleep_duration = update_total_sleep_duration(item)
+    if is_idle_wakeup_duration_update_required(item):
+        print("Idle wakeup time will be updated for key " + key)
+        idle_wakeup_duration = update_idle_wakeup_duration(item)
+    if is_energy_score_update_required(item):
+        print("Average energy score will be updated for key " + key)
+        average_energy_score = update_average_energy_score(item)
+    if sleep_duration or idle_wakeup_duration or average_energy_score:
+        update_ddb_item(key, sleep_duration, idle_wakeup_duration, average_energy_score)
+    else:
+        print("No update required for key " + key)
                 
         
 def is_sleep_duration_update_required(ddb):
