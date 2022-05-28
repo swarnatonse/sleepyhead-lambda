@@ -43,13 +43,18 @@ Resources:
       PackageType: Image
       Architectures:
         - x86_64
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: SleepData
+        - S3WritePolicy:
+            BucketName: sleep-data-swarnatonse
       Events:
         TestScheduledEvent:
           Type: Schedule
           Properties:
-            Schedule: rate(2 minutes)
-            Name: test-csv-schedule
-            Description: Test scheduled job
+            Schedule: cron(0 1 * * ? *)
+            Name: upload-csv-schedule
+            Description: Scheduled job to dumb current sleep data as csv
             Enabled: True
     Metadata:
       Dockerfile: Dockerfile

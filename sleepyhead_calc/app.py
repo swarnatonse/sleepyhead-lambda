@@ -28,8 +28,7 @@ def process_ddb_records(event):
         eventName = record.get("eventName")
         ddb = record.get("dynamodb")
         if eventName == "INSERT" or eventName == "MODIFY":
-            newImage = ddb.get("NewImage")
-            perform_required_updates(newImage)
+            perform_required_updates(ddb)
                 
 def process_scheduled_event(event):
     print("This is a scheduled event")
@@ -39,19 +38,25 @@ def process_scheduled_event(event):
         perform_required_updates(item)
             
 def perform_required_updates(item):
-    key = item.get("DayId").get("S")
+    if item.get("NewImage"):
+        key = item.get("Keys").get("DayId").get("S")
+        item_tbu = item.get("NewImage")
+    else:
+        key = item.get("DayId").get("S")
+        item_tbu = item
+    
     sleep_duration = None
     idle_wakeup_duration = None
     average_energy_score = None
     if is_sleep_duration_update_required(item):
         print("Sleep duration will be updated for key " + key)
-        sleep_duration = update_total_sleep_duration(item)
+        sleep_duration = update_total_sleep_duration(item_tbu)
     if is_idle_wakeup_duration_update_required(item):
         print("Idle wakeup time will be updated for key " + key)
-        idle_wakeup_duration = update_idle_wakeup_duration(item)
+        idle_wakeup_duration = update_idle_wakeup_duration(item_tbu)
     if is_energy_score_update_required(item):
         print("Average energy score will be updated for key " + key)
-        average_energy_score = update_average_energy_score(item)
+        average_energy_score = update_average_energy_score(item_tbu)
     if sleep_duration or idle_wakeup_duration or average_energy_score:
         update_ddb_item(key, sleep_duration, idle_wakeup_duration, average_energy_score)
     else:

@@ -40,11 +40,11 @@ def lambda_handler(event, context):
     sd_rows = construct_objects()
     sd_headers = ddb_S_fields + ddb_N_fields
     
-    with open('sleep_data.csv', 'w') as csvfile:
+    with open('/tmp/sleep_data.csv', 'w') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames = sd_headers)
         writer.writerows(sd_rows)
         
-    s3.upload_file('sleep_data.csv', 'sleep-data-swarnatonse', 'data/sleep_data.csv')
+    s3.upload_file('/tmp/sleep_data.csv', 'sleep-data-swarnatonse', 'data/sleep_data.csv')
     
 
     return {
