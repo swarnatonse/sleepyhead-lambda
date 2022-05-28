@@ -64,7 +64,7 @@ def construct_objects():
         sd_row = dict()
         for ddb_s_field in ddb_S_fields:
             if item.get(ddb_s_field):
-                sd_row[ddb_s_field] = item.get(ddb_s_field).get('S')
+                sd_row[ddb_s_field] = item.get(ddb_s_field).get('S').replace(',', ';') 
         for ddb_n_field in ddb_N_fields:
             if item.get(ddb_n_field):
                 sd_row[ddb_n_field] = item.get(ddb_n_field).get('N')
