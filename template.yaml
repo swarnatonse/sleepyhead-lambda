@@ -56,11 +56,32 @@ Resources:
           Properties:
             Schedule: cron(0 8 * * ? *)
             Name: upload-csv-schedule
-            Description: Scheduled job to dumb current sleep data as csv
+            Description: Scheduled job to dump current sleep data as csv
             Enabled: True
     Metadata:
       Dockerfile: Dockerfile
       DockerContext: ./sleepyhead_csv
+      DockerTag: python3.9-v1
+  SleepyHeadAnalysisFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      PackageType: Image
+      Architectures:
+        - x86_64
+      Policies:
+        - AthenaQueryPolicy:
+            WorkGroupName: primary
+      Events:
+        QueryScheduledEvent:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 9 * * ? *)
+            Name: analaysis-query-schedule
+            Description: Scheduled job to run athena query and perform analysis
+            Enabled: True
+    Metadata:
+      Dockerfile: Dockerfile
+      DockerContext: ./sleepyhead_analysis
       DockerTag: python3.9-v1
 
 Outputs:

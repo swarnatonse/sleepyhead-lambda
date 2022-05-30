@@ -98,5 +98,4 @@ def scan_ddb_filtered(request_input):
             ExpressionAttributeNames=expression_attribute_names,
             ExpressionAttributeValues=expression_attribute_values
         )
-    print(len(ddb_response.get('Items')))
     return ddb_response.get('Items')
