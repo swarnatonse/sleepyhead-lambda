@@ -48,11 +48,13 @@ Resources:
             TableName: SleepData
         - S3WritePolicy:
             BucketName: sleep-data-swarnatonse
+      FunctionUrlConfig:
+        AuthType: AWS_IAM
       Events:
         TestScheduledEvent:
           Type: Schedule
           Properties:
-            Schedule: cron(0 1 * * ? *)
+            Schedule: cron(0 8 * * ? *)
             Name: upload-csv-schedule
             Description: Scheduled job to dumb current sleep data as csv
             Enabled: True

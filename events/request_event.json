@@ -1,0 +1,37 @@
+{
+	"version": "2.0",
+	"routeKey": "$default",
+	"rawPath": "/",
+	"rawQueryString": "",
+	"headers": {
+		"content-length": "21",
+		"x-amzn-trace-id": "Root=1-6292c709-064330f851af6a835b0e5808",
+		"x-forwarded-proto": "https",
+		"host": "k2uam2wfj4v4kurds4trkpcvlu0mqbko.lambda-url.us-east-1.on.aws",
+		"x-forwarded-port": "443",
+		"content-type": "application/json",
+		"x-forwarded-for": "3.236.129.54",
+		"accept": "*/*",
+		"user-agent": "curl/7.79.1"
+	},
+	"requestContext": {
+		"accountId": "anonymous",
+		"apiId": "k2uam2wfj4v4kurds4trkpcvlu0mqbko",
+		"domainName": "k2uam2wfj4v4kurds4trkpcvlu0mqbko.lambda-url.us-east-1.on.aws",
+		"domainPrefix": "k2uam2wfj4v4kurds4trkpcvlu0mqbko",
+		"http": {
+			"method": "POST",
+			"path": "/",
+			"protocol": "HTTP/1.1",
+			"sourceIp": "3.236.129.54",
+			"userAgent": "curl/7.79.1"
+		},
+		"requestId": "5426e724-ea44-4583-be22-7c9e21299101",
+		"routeKey": "$default",
+		"stage": "$default",
+		"time": "29/May/2022:01:06:17 +0000",
+		"timeEpoch": 1653786377955
+	},
+	"body": "eyJzdGFydGRhdGUiOiAiMjAyMi0wNS0yMyIsICJlbmRkYXRlIjogIjIwMjItMDUtMjcifQ==",
+	"isBase64Encoded": false
+}

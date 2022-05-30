@@ -90,9 +90,6 @@
 				"FitbitScore": {
 					"S": "81"
 				},
-				"MorningEnergy": {
-					"S": "4"
-				},
 				"HowLongToSleep": {
 					"S": "30"
 				},
